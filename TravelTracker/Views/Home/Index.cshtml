@@ -1,25 +1,47 @@
-﻿@{
-    ViewBag.Title = "Home Page";
-}
-
-<h2>@ViewBag.Message</h2>
-<h1>Hello</h1>
+﻿
+<input type="button" value="Start Tracking" id="strtTracking" onclick="StartTracking();"/>
+<input type="button" value="Stop Tracking" id="stopTracking" onclick="StopTracking();"/>
 <div id="Position"></div>
 <script type="text/javascript">
     if (navigator.geolocation) {
-        var timeoutVal = 10 * 1000 * 1000;
+        var timeoutVal = 10 * 100 * 1000;
         navigator.geolocation.getCurrentPosition(
-          displayPosition,
-          displayError,
-          { enableHighAccuracy: true, timeout: timeoutVal, maximumAge: 0 }
+            displayPosition,
+            displayError,
+            {}
         );
     }
     else {
         alert("Geolocation is not supported by this browser");
     }
+    var geoTrackerId;
+    function StartTracking() {
+
+        geoTrackerId = setInterval(function () {
+            if (navigator.geolocation) {
+                var timeoutVal = 10*100*1000;
+                navigator.geolocation.getCurrentPosition(
+                    displayPosition,
+                    displayError
+                );
+            }
+            else {
+                alert("Geolocation is not supported by this browser");
+            }
+        }, 2000);
+        $("#stopTracking").attr('disabled', 'disabled');
+
+    }
+
+    function StopTracking() {
+        clearInterval(geoTrackerId);
+        $("#stopTracking").removeAttr('disabled');
+
+    }
 
     function displayPosition(position) {
-        document.getElementById("Position").innerHTML += "Latitude: " + position.coords.latitude + ", Longitude: " + position.coords.longitude+"<br>";
+        var html = $("#Position").html();
+        $("#Position").html(html+"Latitude: " + position.coords.latitude + ", Longitude: " + position.coords.longitude+"<br>");
     }
 
     function displayError(error) {
